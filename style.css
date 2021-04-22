@@ -1,0 +1,43 @@
+.header {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+}
+
+.title {
+    font-size: 28px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    text-align: center;
+    width: 100%;
+}
+
+.instruction {
+    margin: 0px;
+    text-align: center;
+    width: 100%;
+}
+
+.canvas-body {
+    justify-content: center;
+    display: flex;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.canvas {
+    border: 2px solid black;
+    height: 400px;
+    width: 1200px;
+}
+
+.footer {
+    width: 100%;
+}
+
+.button-section {
+    justify-content: center;
+    display: flex;
+    width: 100%;
+}
