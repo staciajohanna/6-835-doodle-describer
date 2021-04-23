@@ -36,11 +36,17 @@ function draw() {
 
 Leap.loop(controllerOptions, function(frame, done) {
     after = {};
-    for (var i = 0; i < Math.min(1, frame.pointables.length); i++) {
-        after[frame.pointables[i].id] = frame.pointables[i];
+    for(var h = 0; h < frame.hands.length; h++){
+        if (frame.hands[h].type == "left") {
+
+        }
+        else {
+            for (var i = 0; i < Math.min(1, frame.pointables.length); i++) {
+                after[frame.pointables[i].id] = frame.pointables[i];
+            }
+            draw();
+        }
     }
-    draw();
-    //done();
 });
 
 /**
