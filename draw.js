@@ -15,6 +15,11 @@ var controllerOptions = { enableGestures: true },
 ctx.lineWidth = 5;
 ctx.translate(width/2, height/2 + 210);
 
+var isLeftHandDetected = false;
+var isLeftHandFistGesture = false;
+
+var warningDiv = document.getElementById("leap-warning");
+
 function draw() {
     var a, b;
 
@@ -36,16 +41,46 @@ function draw() {
 
 Leap.loop(controllerOptions, function(frame, done) {
     after = {};
-    for(var h = 0; h < frame.hands.length; h++){
-        if (frame.hands[h].type == "left") {
+    if (frame.hands.length >= 2) {
+        var leftFrame = frame.hands[1], rightFrame = frame.hands[0];
+        if (frame.hands[0].type == "left") {
+            leftFrame = frame.hands[0];
+            rightFrame = frame.hands[1];
+        }
+        isLeftHandDetected = true;
+        warningDiv.innerHTML = "";
 
+        // Get pointables of each hand
+        var rightHandPointables = [];
+        var leftHandPointables = [];
+        for (var i = 0; i < frame.pointables.length; i++) {
+            // get hand info
+            var curHand = frame.pointables[i].hand();
+            if (curHand.type == "right") {
+                rightHandPointables.push(frame.pointables[i]);
+            }
+            else {
+                leftHandPointables.push(frame.pointables[i]);
+            }
+        }
+
+        for (var i = 0; i < Math.min(1, rightHandPointables.length); i++) {
+            after[rightHandPointables[i].id] = rightHandPointables[i];
+        }
+        draw();
+    }
+    else if (frame.hands.length == 1) {
+        if (frame.hands[0].type == "left") {
+            warningDiv.innerHTML = "No right hand detected";
         }
         else {
-            for (var i = 0; i < Math.min(1, frame.pointables.length); i++) {
-                after[frame.pointables[i].id] = frame.pointables[i];
-            }
-            draw();
+            isLeftHandDetected = false;
+            warningDiv.innerHTML = "No left hand detected";
         }
+    }
+    else if (frame.hands.length == 0) {
+        isLeftHandDetected = false;
+        warningDiv.innerHTML = "No hands detected";
     }
 });
 
