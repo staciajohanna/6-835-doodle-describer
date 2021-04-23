@@ -16,9 +16,10 @@ ctx.lineWidth = 5;
 ctx.translate(width/2, height/2 + 210);
 
 var isLeftHandDetected = false;
-var isLeftHandFistGesture = false;
+var isLeftHandOpenPalm = false;
 
 var warningDiv = document.getElementById("leap-warning");
+var drawingCommandDiv = document.getElementById("drawing-command");
 
 function draw() {
     var a, b;
@@ -37,6 +38,24 @@ function draw() {
 
     before = after;
     return true;
+}
+
+// referenced from : https://developer-archive.leapmotion.com/documentation/javascript/api/Leap.Hand.html#Hand
+function handStateFromHistory(hand, historySamples) {
+    if(hand.grabStrength == 1) return "closed";
+    else if (hand.grabStrength == 0) return "open";
+    else {
+        var sum = 0
+        for(var s = 0; s < historySamples; s++){
+            var oldHand = controller.frame(s).hand(hand.id)
+            if(!oldHand.valid) break;
+            sum += oldHand.grabStrength
+        }
+        var avg = sum/s;
+        if(hand.grabStrength - avg < 0) return "opening";
+        else if (hand.grabStrength > 0) return "closing";
+    }
+    return"not detected";
 }
 
 Leap.loop(controllerOptions, function(frame, done) {
@@ -63,13 +82,27 @@ Leap.loop(controllerOptions, function(frame, done) {
                 leftHandPointables.push(frame.pointables[i]);
             }
         }
-
-        for (var i = 0; i < Math.min(1, rightHandPointables.length); i++) {
-            after[rightHandPointables[i].id] = rightHandPointables[i];
+        
+        // process left hand for drawing gesture
+        if (leftFrame.grabStrength > 0.6) {
+            isLeftHandOpenPalm = false;
+            drawingCommandDiv.innerHTML = "end pen stroke";
         }
-        draw();
+        else {
+            isLeftHandOpenPalm = true;
+            drawingCommandDiv.innerHTML = "start pen stroke";
+        }
+
+        if (isLeftHandOpenPalm) {
+            // process right hand for drawing
+            for (var i = 0; i < Math.min(1, rightHandPointables.length); i++) {
+                after[rightHandPointables[i].id] = rightHandPointables[i];
+            }
+            draw();
+        }
     }
     else if (frame.hands.length == 1) {
+        drawingCommandDiv.innerHTML = "";
         if (frame.hands[0].type == "left") {
             warningDiv.innerHTML = "No right hand detected";
         }
@@ -79,6 +112,7 @@ Leap.loop(controllerOptions, function(frame, done) {
         }
     }
     else if (frame.hands.length == 0) {
+        drawingCommandDiv.innerHTML = "";
         isLeftHandDetected = false;
         warningDiv.innerHTML = "No hands detected";
     }
