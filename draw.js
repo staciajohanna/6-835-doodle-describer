@@ -1,7 +1,7 @@
 // Adapted from https://developer-archive.leapmotion.com/leapjs/examples/draw.html
 // Setup Leap loop with frame callback function
 var controllerOptions = { enableGestures: true },
-    width = 1200,
+    width = 800,
     height = 400,
     canvas = d3.select('#canvas-body')
         .append('canvas')
@@ -13,7 +13,7 @@ var controllerOptions = { enableGestures: true },
     after = {};
 
 ctx.lineWidth = 5;
-ctx.translate(width/2, height/2);
+ctx.translate(width/2, height/2 + 210);
 
 function draw() {
     var a, b;
