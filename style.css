@@ -18,7 +18,7 @@
     width: 100%;
 }
 
-.canvas-body {
+#canvas-body {
     justify-content: center;
     display: flex;
     margin-top: 16px;
@@ -26,7 +26,7 @@
     width: 100%;
 }
 
-.canvas {
+#canvas {
     border: 2px solid black;
     height: 400px;
     width: 1200px;

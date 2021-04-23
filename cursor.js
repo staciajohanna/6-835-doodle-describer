@@ -184,7 +184,7 @@ function init() {
     canvas.setAttribute('touch-action', 'none'); /* for PEP */
     c = canvas.getContext( '2d' );
     container = document.getElementsByClassName('canvas-body');
-    //resetCanvas();
+    resetCanvas();
     //container.appendChild(canvas);
     //document.body.appendChild( container );
     var events = ['pointerover', 'pointerdown', 'pointermove', 'pointerup', 'pointerout', 'pointercancel'];
