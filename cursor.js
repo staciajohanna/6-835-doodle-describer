@@ -180,13 +180,14 @@ function positionHandler(e) {
 }
 
 function init() {
-    canvas = document.getElementById('canvas');
+    canvas = document.createElement( 'canvas-cursor' );
     canvas.setAttribute('touch-action', 'none'); /* for PEP */
     c = canvas.getContext( '2d' );
-    container = document.getElementsByClassName('canvas-body');
+    container = document.createElement( 'div' );
+    container.className = "container-cursor";
     resetCanvas();
-    //container.appendChild(canvas);
-    //document.body.appendChild( container );
+    container.appendChild(canvas);
+    document.body.appendChild( container );
     var events = ['pointerover', 'pointerdown', 'pointermove', 'pointerup', 'pointerout', 'pointercancel'];
     for (var i=0, l=events.length; i<l; i++) {
       canvas.addEventListener(events[i],  positionHandler, false );

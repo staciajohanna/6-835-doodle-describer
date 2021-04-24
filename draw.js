@@ -17,6 +17,7 @@ ctx.translate(width/2, height/2 + 210);
 
 var isLeftHandDetected = false;
 var isLeftHandOpenPalm = false;
+var isSpaceBarPressed = false;
 
 var warningDiv = document.getElementById("leap-warning");
 var drawingCommandDiv = document.getElementById("drawing-command");
@@ -31,18 +32,18 @@ function draw() {
         if (!b) continue;
 
         ctx.strokeStyle = "black";
+        ctx.beginPath();
         ctx.moveTo(b.tipPosition[0], -b.tipPosition[1]);
         ctx.lineTo(a.tipPosition[0], -a.tipPosition[1]);
+        ctx.closePath();
         ctx.stroke();
-        ctx.beginPath();
     }
-
     before = after;
     return true;
 }
 
 // referenced from : https://developer-archive.leapmotion.com/documentation/javascript/api/Leap.Hand.html#Hand
-function handStateFromHistory(hand, historySamples) {
+/*function handStateFromHistory(hand, historySamples) {
     if(hand.grabStrength == 1) return "closed";
     else if (hand.grabStrength == 0) return "open";
     else {
@@ -57,10 +58,28 @@ function handStateFromHistory(hand, historySamples) {
         else if (hand.grabStrength > 0) return "closing";
     }
     return"not detected";
+}*/
+
+function processRightHandDrawing(frame) {
+    var rightHandPointables = [];
+    for (var i = 0; i < frame.pointables.length; i++) {
+        // get hand info
+        var curHand = frame.pointables[i].hand();
+        if (curHand.type == "right") {
+            rightHandPointables.push(frame.pointables[i]);
+        }
+    }
+
+    if (isLeftHandOpenPalm || isSpaceBarPressed) {
+        // process right hand for drawing
+        for (var i = 0; i < Math.min(1, rightHandPointables.length); i++) {
+            after[rightHandPointables[i].id] = rightHandPointables[i];
+        }
+        draw();
+    }
 }
 
-Leap.loop(controllerOptions, function(frame, done) {
-    after = {};
+function checkDrawingValidity(frame) {
     if (frame.hands.length >= 2) {
         var leftFrame = frame.hands[1], rightFrame = frame.hands[0];
         if (frame.hands[0].type == "left") {
@@ -70,52 +89,64 @@ Leap.loop(controllerOptions, function(frame, done) {
         isLeftHandDetected = true;
         warningDiv.innerHTML = "";
 
-        // Get pointables of each hand
-        var rightHandPointables = [];
-        var leftHandPointables = [];
-        for (var i = 0; i < frame.pointables.length; i++) {
-            // get hand info
-            var curHand = frame.pointables[i].hand();
-            if (curHand.type == "right") {
-                rightHandPointables.push(frame.pointables[i]);
-            }
-            else {
-                leftHandPointables.push(frame.pointables[i]);
-            }
-        }
-        
         // process left hand for drawing gesture
         if (leftFrame.grabStrength > 0.6) {
             isLeftHandOpenPalm = false;
             drawingCommandDiv.innerHTML = "end pen stroke";
+            before = {};
         }
         else {
             isLeftHandOpenPalm = true;
             drawingCommandDiv.innerHTML = "start pen stroke";
         }
 
-        if (isLeftHandOpenPalm) {
-            // process right hand for drawing
-            for (var i = 0; i < Math.min(1, rightHandPointables.length); i++) {
-                after[rightHandPointables[i].id] = rightHandPointables[i];
-            }
-            draw();
-        }
+        processRightHandDrawing(frame);
     }
     else if (frame.hands.length == 1) {
         drawingCommandDiv.innerHTML = "";
         if (frame.hands[0].type == "left") {
             warningDiv.innerHTML = "No right hand detected";
+            before = {};
         }
         else {
             isLeftHandDetected = false;
-            warningDiv.innerHTML = "No left hand detected";
+            warningDiv.innerHTML = "";
+            if (!isSpaceBarPressed) {
+                warningDiv.innerHTML = "end pen stroke";
+                before = {};
+            }
+            else {
+                warningDiv.innerHTML = "start pen stroke";
+                processRightHandDrawing(frame);
+            }
         }
     }
-    else if (frame.hands.length == 0) {
+    else if (frame.hands.length == 0) { 
         drawingCommandDiv.innerHTML = "";
         isLeftHandDetected = false;
         warningDiv.innerHTML = "No hands detected";
+        before = {};
+    }
+}
+
+Leap.loop(controllerOptions, function(frame, done) {
+    after = {};
+    checkDrawingValidity(frame);
+});
+
+// Add space bar handling
+// space bar pressed: drawing
+// space bar not press: end stroke
+document.addEventListener('keydown', event => {
+    if (event.code === 'Space') {
+      isSpaceBarPressed = true;
+    }
+});
+
+document.addEventListener('keyup', event => {
+    if (event.code === 'Space') {
+        before = {};
+        isSpaceBarPressed = false;
     }
 });
 
@@ -134,6 +165,7 @@ function clearCanvas() {
     ctx.restore();
 
     drawingDescDiv.innerHTML = "";
+    before = {};
 }
 
 function submitDrawing() {
