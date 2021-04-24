@@ -20,6 +20,7 @@ var isLeftHandOpenPalm = false;
 
 var warningDiv = document.getElementById("leap-warning");
 var drawingCommandDiv = document.getElementById("drawing-command");
+var drawingDescDiv = document.getElementById("doodle-description");
 
 function draw() {
     var a, b;
@@ -131,4 +132,10 @@ function clearCanvas() {
 
     // Restore the transform
     ctx.restore();
+
+    drawingDescDiv.innerHTML = "";
+}
+
+function submitDrawing() {
+    drawingDescDiv.innerHTML = "There is [description] in the drawing.";
 }
