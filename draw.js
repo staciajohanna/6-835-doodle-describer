@@ -1,3 +1,7 @@
+var cursor = new Cursor();
+var LEAPSCALE = 0.6;
+setupUserInterface();
+
 // Adapted from https://developer-archive.leapmotion.com/leapjs/examples/draw.html
 // Setup Leap loop with frame callback function
 var controllerOptions = { enableGestures: true },
@@ -129,10 +133,23 @@ function checkDrawingValidity(frame) {
     }
 }
 
+function processCursorOnRightHand(frame) {
+    // cursor
+    for (let i=0;i<frame.hands.length;i++) {
+        if (frame.hands[i].type == "left") continue;
+        var handPosition = frame.hands[i].screenPosition();
+        var xOffset = 100;
+        var yOffset = 300;
+        var cursorPosition = [handPosition[0] - xOffset, handPosition[1] + yOffset];
+        cursor.setScreenPosition(cursorPosition);
+    }
+}
+
 Leap.loop(controllerOptions, function(frame, done) {
     after = {};
+    processCursorOnRightHand(frame);
     checkDrawingValidity(frame);
-});
+}).use('screenPosition', {scale: LEAPSCALE});
 
 // Add space bar handling
 // space bar pressed: drawing
@@ -169,5 +186,5 @@ function clearCanvas() {
 }
 
 function submitDrawing() {
-    drawingDescDiv.innerHTML = "There is [description] in the drawing.";
+    drawingDescDiv.innerHTML = "There is a flower on the canvas.";
 }
