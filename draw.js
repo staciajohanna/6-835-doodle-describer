@@ -31,8 +31,8 @@ function draw() {
     if (before) {
         ctx.strokeStyle = "black";
         ctx.beginPath();
-        const xOffset = -490;
-        const yOffset = -510;
+        const xOffset = -640;
+        const yOffset = -500;
         ctx.moveTo(before[0] + xOffset, before[1] + yOffset);
         ctx.lineTo(after[0] + xOffset, after[1] + yOffset);
         ctx.closePath();

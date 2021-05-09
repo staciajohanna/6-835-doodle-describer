@@ -14,7 +14,7 @@ var setupUserInterface = function() {
   // Speech
   otherFeedback = new Surface({
     content: "",
-    size: [undefined, 50],
+    size: [undefined, 30],
     properties: {
       backgroundColor: "rgb(34, 34, 34)",
       color: "white"
