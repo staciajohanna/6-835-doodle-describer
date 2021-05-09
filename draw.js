@@ -5,7 +5,7 @@ setupUserInterface();
 // Adapted from https://developer-archive.leapmotion.com/leapjs/examples/draw.html
 // Setup Leap loop with frame callback function
 var controllerOptions = { enableGestures: true },
-    width = 800,
+    width = 400,
     height = 400,
     canvas = d3.select('#canvas-body')
         .append('canvas')
@@ -23,6 +23,12 @@ var isLeftHandDetected = false;
 var isLeftHandOpenPalm = false;
 var isSpaceBarPressed = false;
 
+// For drawing
+var hasDrawn = false;
+var coordX = [];
+var coordY = [];
+var imageData = [];
+
 var warningDiv = document.getElementById("leap-warning");
 var drawingCommandDiv = document.getElementById("drawing-command");
 var drawingDescDiv = document.getElementById("doodle-description");
@@ -35,8 +41,13 @@ function draw() {
         const yOffset = -500;
         ctx.moveTo(before[0] + xOffset, before[1] + yOffset);
         ctx.lineTo(after[0] + xOffset, after[1] + yOffset);
+
+        coordX.push(after[0] + xOffset);
+        coordY.push(after[1] + yOffset);
+
         ctx.closePath();
         ctx.stroke();
+        hasDrawn = true;
     }
     before = after;
     return true;
@@ -129,12 +140,26 @@ Leap.loop(controllerOptions, function(frame, done) {
 // space bar not press: end stroke
 document.addEventListener('keydown', event => {
     if (event.code === 'Space') {
-      isSpaceBarPressed = true;
+        isSpaceBarPressed = true;
     }
 });
 
 document.addEventListener('keyup', event => {
     if (event.code === 'Space') {
+        if (hasDrawn) { // Process 1 stroke
+            var stroke = [];
+            var newX = [];
+            var newY = [];
+            for (let i=0;i<coordX.length;i++) {
+                newX.push(Math.round(coordX[i]));
+                newY.push(Math.round(coordY[i]));
+            }
+            stroke.push(newX); stroke.push(newY);
+            imageData.push(stroke);
+        }
+        coordX = [];
+        coordY = [];
+        hasDrawn = false;
         before = {};
         isSpaceBarPressed = false;
     }
@@ -156,6 +181,7 @@ function clearCanvas() {
 
     drawingDescDiv.innerHTML = "";
     before = {};
+    imageData = [];
 }
 
 // ------------------------- process speech ---------------------------------
@@ -183,10 +209,70 @@ var processSpeech = function(transcript) {
 }
 
 // ------------------------- machine learning parts -------------------------
+const SIZE = 128;
+
 tf.loadLayersModel('./model/mobilenet/model.json').then(function(model) {
     window.model = model;
 });
 
 function submitDrawing() {
-    drawingDescDiv.innerHTML = "There is a flower on the canvas.";
+    // Scale value to 0 - SIZE
+    var minValue = Number.MAX_SAFE_INTEGER;
+    var maxValue = 0;
+    for (let i=0;i<imageData.length;i++) { // find min and max value
+        minValue = Math.min(minValue, Math.min.apply(Math, imageData[i][0]));
+        minValue = Math.min(minValue, Math.min.apply(Math, imageData[i][1]));
+        maxValue = Math.max(maxValue, Math.max.apply(Math, imageData[i][0]));
+        maxValue = Math.max(maxValue, Math.max.apply(Math, imageData[i][1]));
+    }
+    // scale values
+    for (let i=0;i<imageData.length;i++) { // stroke
+        for (let j=0;j<imageData[i].length;j++) {
+            for (let k=0;k<imageData[i][j].length;k++) {
+                let curVal = imageData[i][j][k];
+                let newVal = (curVal - minValue) * SIZE / (maxValue - minValue);
+                imageData[i][j][k] = Math.min(SIZE-1, Math.max(0, Math.round(newVal)));
+            }
+        }
+    }
+    // TODO: Remove duplicate consecutive value (same [x, y])
+
+    // change image encoding: https://www.kaggle.com/echomil/mobilenet-126x126x3-100k-per-class
+    var encodedImg = [];
+    for (let i=0;i<SIZE;i++) { //initialize to 0
+        let temp1 = [];
+        for (let j=0;j<SIZE;j++) {
+            let temp = []
+            for (let k=0;k<3;k++) temp.push(0);
+            temp1.push(temp);
+        }
+        encodedImg.push(temp1);
+    }
+    for (let t=0;t<imageData.length;t++) {
+        let stroke = imageData[t];
+        let points_count = stroke[0].length - 1;
+        let grad = Math.floor(SIZE / points_count);
+        for (let i=0;i<stroke[0].length-1;i++) {
+            encodedImg[stroke[0][i]][stroke[1][i]][0] = 255;
+            encodedImg[stroke[0][i]][stroke[1][i]][1] = 255 - Math.min(t, 10)*13;
+            encodedImg[stroke[0][i]][stroke[1][i]][2] = Math.max(255 - grad * i, 20);
+        }
+    }
+    console.log(encodedImg.length + " " + encodedImg[0].length + " " + encodedImg[0][0].length);
+
+    predict(encodedImg);
+}
+
+var predict = function(input) {
+    if (window.model) {
+      window.model.predict([tf.tensor(input).reshape([1, SIZE, SIZE, 3])]).array().then(function(scores){
+        scores = scores[0];
+        predicted = scores.indexOf(Math.max(...scores));
+        
+        drawingDescDiv.innerText = "There is a " + categories[predicted];
+      });
+    } else {
+      // The model takes a bit to load, if we are too fast, wait
+      setTimeout(function(){predict(input)}, 50);
+    }
 }
