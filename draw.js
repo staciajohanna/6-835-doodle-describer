@@ -33,6 +33,44 @@ var warningDiv = document.getElementById("leap-warning");
 var drawingCommandDiv = document.getElementById("drawing-command");
 var drawingDescDiv = document.getElementById("doodle-description");
 
+function saveAllPointsBetween2Points(xStart, yStart, xEnd, yEnd) {
+    var dx = xEnd-xStart;
+    var dy = yEnd-yStart;
+    var ptCount = parseInt(Math.sqrt(dx*dx + dy*dy))*3;
+    var lastX = -10000;
+    var lastY = -10000;
+    let tempX = [];
+    let tempY = [];
+    if (xStart) {
+        coordX.push(xStart);
+        coordY.push(yStart);
+    }
+    for (let i=1;i<=ptCount;i++) {
+        var t=i/ptCount;
+        var x=xStart+dx*t;
+        var y=yStart+dy*t;
+        var dx1=x-lastX;
+        var dy1=y-lastY;
+        if(dx1*dx1+dy1*dy1 > 0.999){
+            coordX.push(x);
+            coordY.push(y);
+            lastX = x;
+            lastY = y;
+            tempX.push(x);
+            tempY.push(y);
+        }
+    }
+    coordX.push(xEnd);
+    coordY.push(yEnd);
+    
+    tempX.push(xEnd);
+    tempY.push(yEnd);
+    //console.log("tempX " + tempX);
+    //console.log("tempY " + tempY);
+    //console.log(xStart + " " + yStart + " " + xEnd + " " + yEnd);
+    //console.log(cnt);
+}
+
 function draw() {
     if (before) {
         ctx.strokeStyle = "black";
@@ -42,8 +80,7 @@ function draw() {
         ctx.moveTo(before[0] + xOffset, before[1] + yOffset);
         ctx.lineTo(after[0] + xOffset, after[1] + yOffset);
 
-        coordX.push(after[0] + xOffset);
-        coordY.push(after[1] + yOffset);
+        saveAllPointsBetween2Points(before[0] + xOffset, before[1] + yOffset, after[0] + xOffset, after[1] + yOffset);
 
         ctx.closePath();
         ctx.stroke();
@@ -146,13 +183,14 @@ document.addEventListener('keydown', event => {
 
 document.addEventListener('keyup', event => {
     if (event.code === 'Space') {
+        const offset = 700.0;
         if (hasDrawn) { // Process 1 stroke
             var stroke = [];
             var newX = [];
             var newY = [];
             for (let i=0;i<coordX.length;i++) {
-                newX.push(Math.round(coordX[i]));
-                newY.push(Math.round(coordY[i]));
+                newX.push(coordX[i] + offset);
+                newY.push(coordY[i] + offset);
             }
             stroke.push(newX); stroke.push(newY);
             imageData.push(stroke);
@@ -225,6 +263,7 @@ function submitDrawing() {
         maxValue = Math.max(maxValue, Math.max.apply(Math, imageData[i][0]));
         maxValue = Math.max(maxValue, Math.max.apply(Math, imageData[i][1]));
     }
+    //console.log(minValue + " " + maxValue);
     // scale values
     for (let i=0;i<imageData.length;i++) { // stroke
         for (let j=0;j<imageData[i].length;j++) {
@@ -235,7 +274,25 @@ function submitDrawing() {
             }
         }
     }
-    // TODO: Remove duplicate consecutive value (same [x, y])
+    // Remove duplicate consecutive value (same [x, y])
+    for (let i=0;i<imageData.length;i++) {
+        const newX = [imageData[i][0][0]];
+        const newY = [imageData[i][1][0]];
+        for (let j=1;j<imageData[i][0].length;j++) {
+            if (imageData[i][0][j] === imageData[i][0][j-1] && imageData[i][1][j] === imageData[i][1][j-1]) {
+                continue;
+            }
+            newX.push(imageData[i][0][j]);
+            newY.push(imageData[i][1][j]);
+        }
+        imageData[i][0] = newX;
+        imageData[i][1] = newY;
+        
+        console.log("stroke " + i);
+        for (let j=0;j<imageData[i][0].length;j++) {
+            console.log(imageData[i][0][j] + " " + imageData[i][1][j]);
+        }
+    }
 
     // change image encoding: https://www.kaggle.com/echomil/mobilenet-126x126x3-100k-per-class
     var encodedImg = [];
@@ -251,14 +308,13 @@ function submitDrawing() {
     for (let t=0;t<imageData.length;t++) {
         let stroke = imageData[t];
         let points_count = stroke[0].length - 1;
-        let grad = Math.floor(SIZE / points_count);
+        let grad = Math.floor(255 / points_count);
         for (let i=0;i<stroke[0].length-1;i++) {
-            encodedImg[stroke[0][i]][stroke[1][i]][0] = 255;
-            encodedImg[stroke[0][i]][stroke[1][i]][1] = 255 - Math.min(t, 10)*13;
-            encodedImg[stroke[0][i]][stroke[1][i]][2] = Math.max(255 - grad * i, 20);
+            encodedImg[stroke[0][i]][stroke[1][i]][0] = 255/255.0;
+            encodedImg[stroke[0][i]][stroke[1][i]][1] = (255 - Math.min(t, 10)*13)/255.0;
+            encodedImg[stroke[0][i]][stroke[1][i]][2] = (Math.max(255 - grad * i, 20))/255.0;
         }
     }
-    console.log(encodedImg.length + " " + encodedImg[0].length + " " + encodedImg[0][0].length);
 
     predict(encodedImg);
 }
