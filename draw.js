@@ -158,6 +158,35 @@ function clearCanvas() {
     before = {};
 }
 
+// ------------------------- process speech ---------------------------------
+var processSpeech = function(transcript) {
+    // Helper function to detect if any commands appear in a string
+    var userSaid = function(str, commands) {
+      for (var i = 0; i < commands.length; i++) {
+        if (str.indexOf(commands[i]) > -1)
+          return true;
+      }
+      return false;
+    };
+
+    var processed = false;
+    if (userSaid('submit', transcript)) {
+        submitDrawing();
+        processed = true;
+    }
+    else if (userSaid('clear', transcript)) {
+        clearCanvas();
+        processed = true;
+    }
+
+    return processed;
+}
+
+// ------------------------- machine learning parts -------------------------
+tf.loadLayersModel('./model/mobilenet/model.json').then(function(model) {
+    window.model = model;
+});
+
 function submitDrawing() {
     drawingDescDiv.innerHTML = "There is a flower on the canvas.";
 }
