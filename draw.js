@@ -28,9 +28,22 @@ var drawingCommandDiv = document.getElementById("drawing-command");
 var drawingDescDiv = document.getElementById("doodle-description");
 
 function draw() {
-    var a, b;
+    if (before) {
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        const xOffset = -490;
+        const yOffset = -510;
+        ctx.moveTo(before[0] + xOffset, before[1] + yOffset);
+        ctx.lineTo(after[0] + xOffset, after[1] + yOffset);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    before = after;
+    return true;
 
-    for (var id in after) {
+    /*var a, b;
+
+    for (var id in after) { // only 1 id is available bcs only 1 pointer is used
         b = before[id],
         a = after[id];
         if (!b) continue;
@@ -43,29 +56,22 @@ function draw() {
         ctx.stroke();
     }
     before = after;
-    return true;
+    return true;*/
 }
 
-// referenced from : https://developer-archive.leapmotion.com/documentation/javascript/api/Leap.Hand.html#Hand
-/*function handStateFromHistory(hand, historySamples) {
-    if(hand.grabStrength == 1) return "closed";
-    else if (hand.grabStrength == 0) return "open";
-    else {
-        var sum = 0
-        for(var s = 0; s < historySamples; s++){
-            var oldHand = controller.frame(s).hand(hand.id)
-            if(!oldHand.valid) break;
-            sum += oldHand.grabStrength
-        }
-        var avg = sum/s;
-        if(hand.grabStrength - avg < 0) return "opening";
-        else if (hand.grabStrength > 0) return "closing";
-    }
-    return"not detected";
-}*/
-
 function processRightHandDrawing(frame) {
-    var rightHandPointables = [];
+    if (isLeftHandOpenPalm || isSpaceBarPressed) {
+        for (let i=0;i<frame.hands.length;i++) {
+            if (frame.hands[i].type == "left") continue;
+            var handPosition = frame.hands[i].screenPosition();
+            var xOffset = 100;
+            var yOffset = 300;
+            var cursorPosition = [handPosition[0] - xOffset, handPosition[1] + yOffset];
+            after = cursorPosition;
+        }
+        draw();
+    }
+    /*var rightHandPointables = [];
     for (var i = 0; i < frame.pointables.length; i++) {
         // get hand info
         var curHand = frame.pointables[i].hand();
@@ -80,7 +86,7 @@ function processRightHandDrawing(frame) {
             after[rightHandPointables[i].id] = rightHandPointables[i];
         }
         draw();
-    }
+    }*/
 }
 
 function checkDrawingValidity(frame) {

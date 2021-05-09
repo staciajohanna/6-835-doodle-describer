@@ -5,7 +5,7 @@ var Transform = famous.core.Transform;
 var Surface = famous.core.Surface;
 var StateModifier = famous.modifiers.StateModifier;
 
-var CURSORSIZE = 20;
+var CURSORSIZE = 10;
 
 // USER INTERFACE SETUP
 var setupUserInterface = function() {
