@@ -167,7 +167,7 @@ function processCursorOnRightHand(frame) {
 }
 
 Leap.loop(controllerOptions, function(frame, done) {
-    after = {};
+    after = [];
     processCursorOnRightHand(frame);
     checkDrawingValidity(frame);
 }).use('screenPosition', {scale: LEAPSCALE});
@@ -198,7 +198,7 @@ document.addEventListener('keyup', event => {
         coordX = [];
         coordY = [];
         hasDrawn = false;
-        before = {};
+        before = [];
         isSpaceBarPressed = false;
     }
 });
@@ -218,9 +218,50 @@ function clearCanvas() {
     ctx.restore();
 
     drawingDescDiv.innerHTML = "";
-    before = {};
+    before = [];
     imageData = [];
 }
+
+// ------------------------- process mouse ----------------------------------
+var isMousePressed = false;
+
+const mouseX = 440;
+const mouseY = 90;
+document.addEventListener('mousedown', event => {
+    after = [event.offsetX + mouseX, event.offsetY + mouseY];
+    draw();
+    isMousePressed = true;
+});
+
+document.addEventListener('mousemove', event => {
+    if (isMousePressed === true) {
+        after = [event.offsetX + mouseX, event.offsetY + mouseY];
+        draw();
+    }
+});
+
+document.addEventListener('mouseup', event => {
+    if (isMousePressed === true) {
+        const offset = 700.0;
+        if (hasDrawn) { // Process 1 stroke
+            var stroke = [];
+            var newX = [];
+            var newY = [];
+            for (let i=0;i<coordX.length;i++) {
+                newX.push(coordX[i] + offset);
+                newY.push(coordY[i] + offset);
+            }
+            stroke.push(newX); stroke.push(newY);
+            imageData.push(stroke);
+        }
+        coordX = [];
+        coordY = [];
+        hasDrawn = false;
+        after = [];
+        before = [];
+        isMousePressed = false;
+    }
+});
 
 // ------------------------- process speech ---------------------------------
 var processSpeech = function(transcript) {
@@ -288,10 +329,10 @@ function submitDrawing() {
         imageData[i][0] = newX;
         imageData[i][1] = newY;
         
-        console.log("stroke " + i);
+        /*console.log("stroke " + i);
         for (let j=0;j<imageData[i][0].length;j++) {
             console.log(imageData[i][0][j] + " " + imageData[i][1][j]);
-        }
+        }*/
     }
 
     // change image encoding: https://www.kaggle.com/echomil/mobilenet-126x126x3-100k-per-class
