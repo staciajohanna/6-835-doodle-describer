@@ -40,23 +40,6 @@ function draw() {
     }
     before = after;
     return true;
-
-    /*var a, b;
-
-    for (var id in after) { // only 1 id is available bcs only 1 pointer is used
-        b = before[id],
-        a = after[id];
-        if (!b) continue;
-
-        ctx.strokeStyle = "black";
-        ctx.beginPath();
-        ctx.moveTo(b.tipPosition[0], -b.tipPosition[1]);
-        ctx.lineTo(a.tipPosition[0], -a.tipPosition[1]);
-        ctx.closePath();
-        ctx.stroke();
-    }
-    before = after;
-    return true;*/
 }
 
 function processRightHandDrawing(frame) {
@@ -71,22 +54,6 @@ function processRightHandDrawing(frame) {
         }
         draw();
     }
-    /*var rightHandPointables = [];
-    for (var i = 0; i < frame.pointables.length; i++) {
-        // get hand info
-        var curHand = frame.pointables[i].hand();
-        if (curHand.type == "right") {
-            rightHandPointables.push(frame.pointables[i]);
-        }
-    }
-
-    if (isLeftHandOpenPalm || isSpaceBarPressed) {
-        // process right hand for drawing
-        for (var i = 0; i < Math.min(1, rightHandPointables.length); i++) {
-            after[rightHandPointables[i].id] = rightHandPointables[i];
-        }
-        draw();
-    }*/
 }
 
 function checkDrawingValidity(frame) {
