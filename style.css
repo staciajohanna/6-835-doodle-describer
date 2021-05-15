@@ -11,6 +11,10 @@ body {
     width: 700px;
 }
 
+.important-desc {
+    color: coral !important;
+}
+
 .tutorial-desc {
     font-size: 16px;
     margin: 40px;
@@ -31,6 +35,29 @@ body {
     background-color: red;
     height: 50px;
     width: 50px;
+}
+
+.tutorial-status {
+    border: white solid 1px;
+    display: flex;
+    flex-flow: row;
+    margin-left: 20px;
+}
+
+.left-tutorial-status, .right-tutorial-status {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.hands-body {
+    align-items: center;
+    display: flex;
+    flex-flow: row;
+    margin-top: 20px;
+}
+
+.tutorial-hands {
+    width: 800px;
 }
 
 .header {

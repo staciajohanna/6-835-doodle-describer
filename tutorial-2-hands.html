@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <title>Doodle Describer</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="style.css" />
+
+        <link rel="stylesheet" type="text/css" href="lib/famous.css" />
+        <script type="text/javascript" src="lib/famous.min.js"></script>
+        <script type="text/javascript" src="lib/underscore.min.js"></script>
+        <script type="text/javascript" src="lib/backbone.min.js"></script>
+
+        <!-- Leap -->
+        <script type="text/javascript" src="lib/leap.min.js"></script>
+        <script type="text/javascript" src="lib/leap-plugins.min.js"></script>
+
+        <script src='lib/d3.v3.min.js'></script>
+    </head>
+    <body>
+        <img src="./logo.png" width="400px"> 
+        <h2>Tutorial part 2/3: Leap Motion with 2 Hands</h2>
+        <div class="hands-body">
+            <div class="tutorial-hands">
+                There are several ways to draw on the doodle canvas. 
+                The first one is by using both left and right hand on the leap motion.
+                <br> <b class="important-desc">Left hand</b> indicates start and end stroke. 
+                <br>To <b class="important-desc">start stroke</b>, open the left hand palm, facing down to the leap motion.
+                <br> To <b class="important-desc">end stroke</b>, close the left hand into a fist, also facing down to the leap motion.
+                <br><br> <b class="important-desc">Right hand</b> is used for drawing. The position is indicated by the red dot on the screen.
+                <br> Point/open right hand palm above the leap motion and move around to <b class="important-desc">draw</b>.
+
+                <br><br> Let's try the gestures for both left and right hand! 
+                <br>Check out the status of both hands on the right. Try out different gesture and move your hands around to see how they work.
+            </div>
+
+            <div class="tutorial-status">
+                <div class="left-tutorial-status">
+                    <b>Left hand</b>
+                    <br> Detected? <span id="left-tutorial-detect"> No </span>
+                    <br> Gesture: <span id="left-tutorial-gesture"> N/A </span>
+                </div>
+                <div class="right-tutorial-status">
+                    <b>Right hand</b>
+                    <br> Detected? <span id="right-tutorial-detect"> No </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-button-group">
+            <a href="./tutorial-1-voice.html" type="button" class="tutorial-btn btn btn-outline-light btn-lg">Previous Tutorial</a>
+            <a href="./tutorial-3-hand-space.html" type="button" class="tutorial-btn btn btn-outline-light btn-lg">Next Tutorial</a>
+            <a href="./doodle.html" type="button" class="tutorial-btn btn btn-outline-light btn-lg">Skip to Doodle Canvas</a>
+        </div>
+
+        <script type="text/javascript" src="./javascripts/setup.js"></script>
+        <script type="text/javascript" src="./javascripts/cursor.js"></script>
+        <script type="text/javascript" src="./javascripts/helpers.js"></script>
+        <script type="text/javascript" src="./javascripts/2-hands-tutorial.js"></script>
+    </body>
+</html>
