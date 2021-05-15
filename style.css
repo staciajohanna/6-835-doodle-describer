@@ -11,6 +11,22 @@ body {
     width: 700px;
 }
 
+.tutorial-desc {
+    font-size: 24px;
+    margin: 40px;
+    text-align: center;
+}
+
+.tutorial-button-group {
+    display: flex;
+    flex-flow: row;
+}
+
+.tutorial-btn {
+    margin: 50px;
+    width: 300px;
+}
+
 .header {
     display: flex;
     flex-flow: column;
