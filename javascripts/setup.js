@@ -46,3 +46,23 @@ var setupUserInterface = function() {
   mainContext.add(cursorOriginModifier).add(cursorModifier).add(cursorSurface);
 
 };
+
+// SpeechOnlyInterface
+var setupSpeechInterface = function() {
+  var mainContext = Engine.createContext();
+
+  // Speech
+  otherFeedback = new Surface({
+    content: "",
+    size: [undefined, 30],
+    properties: {
+      backgroundColor: "rgb(34, 34, 34)",
+      color: "white"
+    }
+  });
+  var otherModifier = new StateModifier({
+    origin: [0.0, 1.0],
+    align: [0.0, 1.0]
+  })
+  mainContext.add(otherModifier).add(otherFeedback);
+};
