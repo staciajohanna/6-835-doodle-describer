@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <title>Doodle Describer</title>
+
+        <link rel="stylesheet" type="text/css" href="style.css" />
+
+        <link rel="stylesheet" type="text/css" href="lib/famous.css" />
+        <script type="text/javascript" src="lib/famous.min.js"></script>
+        <script type="text/javascript" src="lib/underscore.min.js"></script>
+        <script type="text/javascript" src="lib/backbone.min.js"></script>
+
+        <!-- Leap -->
+        <script type="text/javascript" src="lib/leap.min.js"></script>
+        <script type="text/javascript" src="lib/leap-plugins.min.js"></script>
+
+        <script src='lib/d3.v3.min.js'></script>
+    </head>
+    <body>
+        <div class="header">
+            <h1 class="title"> Doodle Describer </h1>
+            <p class="instruction"> Hold both of your hand above the leap motion. Open your left hand to start pen stroke and move your right hand to start drawing. Close your left hand into a fist to stop the pen stroke.</p>
+        </div>
+
+        <div id="canvas-body">
+        </div>
+
+        <div class="footer">
+            <div id="doodle-description"></div>
+            <div id="leap-warning"></div>
+            <div id="drawing-command"></div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.5.2/dist/tf.min.js"></script>
+        <script type="text/javascript" src="./javascripts/setup.js"></script>
+        <script type="text/javascript" src="./javascripts/cursor.js"></script>
+        <script type="text/javascript" src="./javascripts/helpers.js"></script>
+        <script type="text/javascript" src="./javascripts/categories.js"></script>
+        <script type="text/javascript" src="./javascripts/draw.js"></script>
+        <script type="text/javascript" src="./javascripts/setupSpeech.js"></script>
+    </body>
+</html>

@@ -1,3 +1,16 @@
+body {
+    align-items: center;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-flow: column;
+}
+
+.menu-btn {
+    margin: 30px;
+    width: 700px;
+}
+
 .header {
     display: flex;
     flex-flow: column;
