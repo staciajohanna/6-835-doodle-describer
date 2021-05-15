@@ -7,6 +7,7 @@
     
         <title>Doodle Describer</title>
 
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="style.css" />
 
         <link rel="stylesheet" type="text/css" href="lib/famous.css" />
@@ -22,17 +23,38 @@
     </head>
     <body>
         <div class="header">
-            <h1 class="title"> Doodle Describer </h1>
-            <p class="instruction"> Hold both of your hand above the leap motion. Open your left hand to start pen stroke and move your right hand to start drawing. Close your left hand into a fist to stop the pen stroke.</p>
+            <img src="./logo.png" width="300px"> 
         </div>
 
-        <div id="canvas-body">
+        <div class="doodle-body">
+            <div class="doodle-instruction">
+                <h5>How to draw:</h5>
+                <b class="important-desc"> 2 hands on Leap </b>
+                <br>- Left hand: 
+                <br>open palm = start stroke, close fist = end stroke
+                <br>- Right hand: pen stroke
+                <br><b class="important-desc"> 1 hand on Leap + spacebar </b>
+                <br>- Spacebar: pressed = start stroke, not pressed = end stroke
+                <br> - Right hand: pen stroke
+                <br><b class="important-desc"> Mouse </b>
+                <br> Detach the leap from your computer,
+                then use the mouse for drawing.
+                <h5>Voice Command:</h5>
+                - <b class="important-desc"> "submit" </b> = Submit drawing to be analyzed
+                <br>- <b class="important-desc"> "clear" </b> = Clear canvas
+                <br><a href="./tutorial.html" type="button" class="back-btn btn btn-outline-light">Go back to tutorial</a>
+            </div>
+
+            <div id="canvas-body"></div>
         </div>
 
         <div class="footer">
+            <div class="device-status">
+                Device status:
+                <div id="leap-warning"></div>
+                <div id="drawing-command"></div>
+            </div>
             <div id="doodle-description"></div>
-            <div id="leap-warning"></div>
-            <div id="drawing-command"></div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.5.2/dist/tf.min.js"></script>

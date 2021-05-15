@@ -11,7 +11,8 @@ var controllerOptions = { enableGestures: true },
         .append('canvas')
         .attr('width', width)
         .attr('height', height)
-        .attr("style", "outline: thin solid black;").node(),
+        .attr("style", "outline: thin solid white;")
+        .attr("style", "background-color: white;").node(),
     ctx = canvas.getContext('2d'),
     before = {},
     after = {};
@@ -95,8 +96,8 @@ function processRightHandDrawing(frame) {
         for (let i=0;i<frame.hands.length;i++) {
             if (frame.hands[i].type == "left") continue;
             var handPosition = frame.hands[i].screenPosition();
-            var xOffset = 100;
-            var yOffset = 300;
+            var xOffset = 310;
+            var yOffset = 310;
             var cursorPosition = [handPosition[0] - xOffset, handPosition[1] + yOffset];
             after = cursorPosition;
         }
