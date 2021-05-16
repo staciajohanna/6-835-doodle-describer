@@ -1,4 +1,4 @@
-var VOICEINDEX = 17;
+var VOICEINDEX = 3;
 
 // SPEECH SYNTHESIS SETUP
 var voicesReady = false;
@@ -13,7 +13,7 @@ var generateSpeech = function(message, callback) {
     var msg = new SpeechSynthesisUtterance();
     msg.voice = window.speechSynthesis.getVoices()[VOICEINDEX];
     msg.text = message;
-    msg.rate = 0.2;
+    msg.rate = 0.6;
     if (typeof callback !== "undefined")
       msg.onend = callback;
     speechSynthesis.speak(msg);

@@ -367,7 +367,9 @@ var predict = function(input) {
         scores = scores[0];
         predicted = scores.indexOf(Math.max(...scores));
         
-        drawingDescDiv.innerText = "There is a " + categories[predicted];
+        let desc = "There is a " + categories[predicted];
+        drawingDescDiv.innerText = desc;
+        generateSpeech(desc);
       });
     } else {
       // The model takes a bit to load, if we are too fast, wait
