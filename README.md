@@ -2,6 +2,21 @@
 Final project for MIT course 6.835 Intelligent Modal Interaction.
 
 ## Setup Instruction
+### Leap Motion Setup
+Install the Leap Motion SDK for your OS. Position the Leap sensor in front of your keyboard and run through a couple of the pre-packaged demos to make sure things are working properly.
+
+### Doodle Describer setup
+1. Clone the repository.
+2. Connect Leap Motion to your computer.
+3. In the terminal, `cd` into the directory, then run `python3 -m http.server`.
+4. Open localhost:8000 on Google Chrome.
+5. Use the system!
+
+Note: This system is only tested on MacOS Catalina and Google Chrome.
+
+Note: If your laptop is unable to generate sound (ie speechSynthesis.speak() is not working), your chrome needs to have your scripts as trusted in the sound settings. You can add it at chrome://settings/content/sound.
+
+Note: To draw with mouse/trackpad, disconnect the leap motion from your computer before continuing.
 
 ## Table of Contents
 - javascripts: folder that contains all the javascripts (JS) file used in the system.
